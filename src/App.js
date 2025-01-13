@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import userInfo from './userInfo.json'; // JSON faylini import qilish
 
 function App() {
-  const [userData, setUserData] = useState(null);
-
-  // Telegram WebApp ma'lumotlarini olish
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp; // Telegram WebApp API
-    if (tg) {
-      tg.ready(); // WebApp tayyorlash
-      const initDataUnsafe = tg.initDataUnsafe || {};
-      const user = initDataUnsafe.user || {};
-      console.log("Telegram user data:", user); // Ma'lumotlarni konsolga chiqarish
-      setUserData(user);
-    } else {
-      console.error("Telegram WebApp API ishlamayapti!");
-    }
-  }, []);
+  const [userData] = useState(userInfo);
 
   const handleClose = () => {
     window.Telegram.WebApp.close(); // Web App-ni yopish
@@ -27,11 +14,21 @@ function App() {
       <h1>Telegram WebApp</h1>
       {userData ? (
         <div>
-          <p><strong>Ism:</strong> {userData.first_name} {userData.last_name}</p>
-          <p><strong>Foydalanuvchi nomi:</strong> {userData.username}</p>
+          {userData.map((value, inx) => {
+            return (
+              <div key={inx}>
+                <p >{value.id}</p>
+                <p >{value.firstName}</p>
+                <p >{value.lastName}</p>
+                <p >{value.username}</p>
+                <p >{value.phoneNumber}</p>
+                <p >{value.profilePhotoUrl}</p>
+              </div>
+            )
+          })}
         </div>
       ) : (
-        <p>Telegram ma'lumotlarini yuklash...</p>
+        <p>Ma'lumotlarni yuklash...</p>
       )}
       <button onClick={handleClose} className="close-btn">Yopish</button>
     </div>
