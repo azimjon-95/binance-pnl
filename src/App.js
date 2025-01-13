@@ -6,18 +6,16 @@ function App() {
 
   // Telegram WebApp ma'lumotlarini olish
   useEffect(() => {
-    const tg = window.Telegram.WebApp; // Telegram WebApp API
-    tg.ready(); // Web App-ni tayyorlash
-
-    // Foydalanuvchi ma'lumotlarini olish
-    const initDataUnsafe = tg.initDataUnsafe || {};
-    const user = initDataUnsafe.user || {};
-
-    setUserData(user);
-
-    return () => {
-      tg.close(); // Web App-ni yopish
-    };
+    const tg = window.Telegram?.WebApp; // Telegram WebApp API
+    if (tg) {
+      tg.ready(); // WebApp tayyorlash
+      const initDataUnsafe = tg.initDataUnsafe || {};
+      const user = initDataUnsafe.user || {};
+      console.log("Telegram user data:", user); // Ma'lumotlarni konsolga chiqarish
+      setUserData(user);
+    } else {
+      console.error("Telegram WebApp API ishlamayapti!");
+    }
   }, []);
 
   const handleClose = () => {
