@@ -19,7 +19,7 @@ function App() {
   const renderUserData = () => {
     // if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
 
-    const dataUser = userInfo.filter(user => user.id == userId || storedUserId);
+    const dataUser = userInfo.filter(user => user.id === userId || storedUserId);
     return dataUser.map((user, index) => {
       const userInfoArray = [
         { label: 'Ism', value: `${user.firstName} ${user.lastName}` },
