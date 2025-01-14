@@ -3,24 +3,25 @@ import './App.css';
 import userInfo from './userInfo.json';
 
 function App() {
-  const storedUserId = localStorage.getItem('userId');
-  const [userId, setUserId] = useState(storedUserId || null); // Initialize with stored userId if available
+  const [userId, setUserId] = useState(null); // Initialize with stored userId if available
+  const [userData, setUserData] = useState([]); // Initialize with stored userId if available
 
   useEffect(() => {
     const pathId = window.location.pathname.split('/')[1];
     setUserId(pathId);
-  }, []);
-  localStorage.setItem('userId', userId);
+    const dataUser = userInfo.filter(user => user.id === userId);
+    setUserData(dataUser)
+  }, [userInfo]);
+
 
   const handleClose = () => {
 
   };
 
   const renderUserData = () => {
-    // if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
+    if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
 
-    const dataUser = userInfo.filter(user => user.id === userId || storedUserId);
-    return dataUser.map((user, index) => {
+    return userData.map((user, index) => {
       const userInfoArray = [
         { label: 'Ism', value: `${user.firstName} ${user.lastName}` },
         { label: 'Foydalanuvchi nomi', value: user.username },
