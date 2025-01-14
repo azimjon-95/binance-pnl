@@ -6,7 +6,7 @@ function App() {
   const storedUserId = localStorage.getItem('userId');
   const [userData, setUserData] = useState(() => {
     // Only filter the user data if the stored user ID is available
-    return storedUserId ? userInfo.filter(user => user.id === storedUserId) : [];
+    return userInfo.filter(user => user.id === storedUserId);
   });
   const [userId, setUserId] = useState(storedUserId || null); // Initialize with stored userId if available
 
@@ -15,7 +15,6 @@ function App() {
     if (pathId !== storedUserId) {
       setUserId(pathId);
       localStorage.setItem('userId', pathId);
-      // Optionally update userData only if the userId changes
       setUserData(userInfo.filter(user => user.id === pathId));
     }
   }, [storedUserId, userInfo]);
@@ -25,7 +24,7 @@ function App() {
   };
 
   const renderUserData = () => {
-    if (!userData.length) return <p>Ma'lumotlarni yuklash...</p>;
+    // if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
 
     return userData.map((user, index) => {
       const userInfoArray = [
