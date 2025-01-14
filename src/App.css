@@ -106,3 +106,34 @@ button.close-btn:hover {
         opacity: 1;
     }
 }
+
+
+/* ======================= */
+.telegram-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #0088cc;
+    /* Telegramning rangi */
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    border: none;
+}
+
+.telegram-btn:hover {
+    background-color: #007ab8;
+    /* Hover effekti */
+    transform: translateY(-2px);
+}
+
+.telegram-btn:active {
+    background-color: #006fa1;
+    /* Bosilgan holat */
+    transform: translateY(0);
+}
