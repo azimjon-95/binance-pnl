@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import userInfo from './userInfo.json';
 
 function App() {
   const [userId, setUserId] = useState(null); // Initialize with stored userId if available
-  const [userData, setUserData] = useState([]); // Initialize with stored userId if available
 
   useEffect(() => {
     const pathId = window.location.pathname.split('/')[1];
     setUserId(pathId);
-    const dataUser = userInfo.filter(user => user.id === userId);
-    setUserData(dataUser)
-  }, [userInfo]);
+  }, []); // This runs only once when the component mounts
+
+  // Use useMemo to optimize filtering
+  const filteredUserData = useMemo(() => {
+    return userInfo.filter(user => user.id == userId);
+  }, [userId]); // Recalculate only when userId changes
 
 
   const handleClose = () => {
@@ -19,9 +21,9 @@ function App() {
   };
 
   const renderUserData = () => {
-    if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
+    if (!filteredUserData?.length) return <p>Ma'lumotlarni yuklash...</p>;
 
-    return userData.map((user, index) => {
+    return filteredUserData.map((user, index) => {
       const userInfoArray = [
         { label: 'Ism', value: `${user.firstName} ${user.lastName}` },
         { label: 'Foydalanuvchi nomi', value: user.username },
