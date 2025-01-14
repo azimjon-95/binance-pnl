@@ -4,17 +4,13 @@ import userInfo from './userInfo.json';
 
 function App() {
   const storedUserId = localStorage.getItem('userId');
-  const [userData, setUserData] = useState([]);
   const [userId, setUserId] = useState(storedUserId || null); // Initialize with stored userId if available
 
   useEffect(() => {
     const pathId = window.location.pathname.split('/')[1];
-    if (pathId !== storedUserId) {
-      setUserId(pathId);
-      localStorage.setItem('userId', pathId);
-      setUserData(userInfo.filter(user => user.id == pathId));
-    }
-  }, [storedUserId, userInfo]);
+    setUserId(pathId);
+    localStorage.setItem('userId', pathId);
+  }, []);
 
   const handleClose = () => {
     window.Telegram.WebApp.close(); // Web App-ni yopish
@@ -23,7 +19,8 @@ function App() {
   const renderUserData = () => {
     // if (!userData?.length) return <p>Ma'lumotlarni yuklash...</p>;
 
-    return userData.map((user, index) => {
+    const dataUser = userInfo.filter(user => user.id == userId || storedUserId);
+    return dataUser.map((user, index) => {
       const userInfoArray = [
         { label: 'Ism', value: `${user.firstName} ${user.lastName}` },
         { label: 'Foydalanuvchi nomi', value: user.username },
