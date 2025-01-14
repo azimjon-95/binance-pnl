@@ -4,10 +4,7 @@ import userInfo from './userInfo.json';
 
 function App() {
   const storedUserId = localStorage.getItem('userId');
-  const [userData, setUserData] = useState(() => {
-    // Only filter the user data if the stored user ID is available
-    return userInfo.filter(user => user.id === storedUserId);
-  });
+  const [userData, setUserData] = useState([]);
   const [userId, setUserId] = useState(storedUserId || null); // Initialize with stored userId if available
 
   useEffect(() => {
