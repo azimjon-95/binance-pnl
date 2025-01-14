@@ -1,38 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import userInfo from './userInfo.json'; // JSON faylini import qilish
+import userInfo from './userInfo.json';
 
 function App() {
-  const [userData] = useState(userInfo);
+  const [userData, setUserData] = useState([]);
+  const [userId, setUserId] = useState(null); // State for storing the user ID
+
+  useEffect(() => {
+    // Extract the ID from the URL
+    const pathId = window.location.pathname.split('/')[1];
+    setUserId(pathId);
+
+    // JSON fayldan ma'lumotlarni olish
+    setUserData(userInfo);
+  }, []);
 
   const handleClose = () => {
     window.Telegram.WebApp.close(); // Web App-ni yopish
   };
 
+  const renderUserData = () => {
+    if (!userData.length) return <p>Ma'lumotlarni yuklash...</p>;
+
+    return userData.map((user, index) => {
+      const userInfoArray = [
+        { label: 'Ism', value: `${user.firstName} ${user.lastName}` },
+        { label: 'Foydalanuvchi nomi', value: user.username },
+        { label: 'Telefon raqami', value: user.phoneNumber },
+        {
+          label: 'Profil rasm',
+          value: (
+            <img
+              src={user.profilePhotoUrl === "No photo" ? 'https://cdn-icons-png.flaticon.com/128/3940/3940417.png' : user.profilePhotoUrl}
+              alt="Profile"
+              width="100"
+            />
+          ),
+        },
+      ];
+
+      return (
+        <div key={index} className="user-card">
+          {userInfoArray.map((item, idx) => (
+            <p key={idx}>
+              <strong>{item.label}:</strong> {item.value}
+            </p>
+          ))}
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="box">
       <h1>Telegram WebApp</h1>
-      {userData ? (
-        <div>
-          {userData.map((value, inx) => {
-            return (
-              <div key={inx}>
-                <p >{value.id}</p>
-                <p >{value.firstName}</p>
-                <p >{value.lastName}</p>
-                <p >{value.username}</p>
-                <p >{value.phoneNumber}</p>
-                <p >{value.profilePhotoUrl}</p>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <p>Ma'lumotlarni yuklash...</p>
-      )}
+      <p>User ID: {userId}</p> {/* Display the extracted user ID */}
+      <div className="user-list">{renderUserData()}</div>
       <button onClick={handleClose} className="close-btn">Yopish</button>
     </div>
   );
 }
 
 export default App;
+
