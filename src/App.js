@@ -3,17 +3,22 @@ import './App.css';
 import userInfo from './userInfo.json';
 
 function App() {
-  const [userData, setUserData] = useState([]);
-  const [userId, setUserId] = useState(null); // State for storing the user ID
+  const storedUserId = localStorage.getItem('userId');
+  const [userData, setUserData] = useState(() => {
+    // Only filter the user data if the stored user ID is available
+    return storedUserId ? userInfo.filter(user => user.id === storedUserId) : [];
+  });
+  const [userId, setUserId] = useState(storedUserId || null); // Initialize with stored userId if available
 
   useEffect(() => {
-    // Extract the ID from the URL
     const pathId = window.location.pathname.split('/')[1];
-    setUserId(pathId);
-
-    // JSON fayldan ma'lumotlarni olish
-    setUserData(userInfo);
-  }, []);
+    if (pathId !== storedUserId) {
+      setUserId(pathId);
+      localStorage.setItem('userId', pathId);
+      // Optionally update userData only if the userId changes
+      setUserData(userInfo.filter(user => user.id === pathId));
+    }
+  }, [storedUserId, userInfo]);
 
   const handleClose = () => {
     window.Telegram.WebApp.close(); // Web App-ni yopish
