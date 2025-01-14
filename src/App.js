@@ -12,7 +12,7 @@ function App() {
     if (pathId !== storedUserId) {
       setUserId(pathId);
       localStorage.setItem('userId', pathId);
-      setUserData(userInfo.filter(user => user.id === pathId));
+      setUserData(userInfo.filter(user => user.id == pathId));
     }
   }, [storedUserId, userInfo]);
 
