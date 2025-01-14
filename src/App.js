@@ -9,11 +9,11 @@ function App() {
   useEffect(() => {
     const pathId = window.location.pathname.split('/')[1];
     setUserId(pathId);
-    localStorage.setItem('userId', pathId);
   }, []);
+  localStorage.setItem('userId', userId);
 
   const handleClose = () => {
-    window.Telegram.WebApp.close(); // Web App-ni yopish
+
   };
 
   const renderUserData = () => {
