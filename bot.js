@@ -136,7 +136,7 @@ function saveDataToLocal(newUser) {
 // --- API yo'llari ---
 // Foydalanuvchini o'chirish
 app.delete('/api/users/:id', (req, res) => {
-    const userId = req.params.id;
+    const userId = req.body;
 
     fs.readFile(userInfoPath, 'utf8', (err, data) => {
         if (err) {

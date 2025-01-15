@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import userInfo from './userInfo.json';
+import axios from 'axios';
 
 function App() {
   const [userId, setUserId] = useState(null); // Initialize with stored userId if available
@@ -10,39 +11,12 @@ function App() {
     setUserId(pathId);
   }, []); // This runs only once when the component mounts
 
+  console.log(window);
+
   // Use useMemo to optimize filtering
   const filteredUserData = useMemo(() => {
-    return userInfo.filter(user => user.id === userId);
+    return userInfo.filter(user => user.id == userId);
   }, [userId]); // Recalculate only when userId changes
-
-
-  const handleLogout = async (id) => {
-    try {
-      // Send a request to the server to delete the user data
-      const response = await fetch('/api/delete-user', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      if (response.ok) {
-        // Clear userId state
-        setUserId(null);
-
-        // Optionally, clear sessionStorage or localStorage
-        sessionStorage.removeItem('userId');
-        localStorage.removeItem('userId');
-
-
-      } else {
-        alert('Error deleting user data');
-      }
-    } catch (error) {
-      alert('Error connecting to the server');
-    }
-  };
 
   const renderUserData = () => {
     if (!filteredUserData?.length) return <p>Ma'lumotlarni yuklash...</p>;
@@ -77,6 +51,23 @@ function App() {
   };
 
 
+  const handleLogout = async (id) => {
+    try {
+      // Foydalanuvchi ma'lumotlarini serverdan o'chirish uchun so'rov yuboriladi
+      const response = await axios.delete(`http://localhost:5000/api/user/${id}`);
+
+      if (response.status === 200) {
+        // userId holatini tozalash
+        setUserId(null);
+      } else {
+        alert('Foydalanuvchi ma’lumotlarini o‘chirishda xatolik yuz berdi');
+      }
+    } catch (error) {
+      alert('Server bilan ulanishda xatolik');
+    }
+  };
+
+
   if (!userId) {
     // Agar userId mavjud bo'lmasa, foydalanuvchiga xato xabari ko'rsatiladi
     return (
@@ -94,7 +85,6 @@ function App() {
       </div>
     );
   }
-
   return (
     <div className="box">
       <h1>Telegram WebApp</h1>
