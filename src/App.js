@@ -4,22 +4,52 @@ import userInfo from './userInfo.json';
 import axios from 'axios';
 
 function App() {
-  const [userId, setUserId] = useState(null); // Initialize with stored userId if available
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    const initDataUnsafe = tg.initDataUnsafe || {};
+    setUserData(initDataUnsafe.user || {});
+
     const pathId = window.location.pathname.split('/')[1];
-    setUserId(pathId);
-  }, []); // This runs only once when the component mounts
+    if (pathId) setUserId(pathId);
 
-  console.log(window);
+    setLoading(false);
 
-  // Use useMemo to optimize filtering
+    return () => {
+      tg.close();
+    };
+  }, []);
+
+  const handleClose = () => {
+    window.Telegram.WebApp.close();
+  };
+
   const filteredUserData = useMemo(() => {
-    return userInfo.filter(user => user.id == userId);
-  }, [userId]); // Recalculate only when userId changes
+    return userInfo.filter(user => user.id === userId);
+  }, [userId]);
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/user/${userId}`);
+      if (response.status === 200) {
+        setUserId(null);
+        alert('Foydalanuvchi muvaffaqiyatli o‘chirildi.');
+      } else {
+        alert('Foydalanuvchini o‘chirishda xatolik yuz berdi.');
+      }
+    } catch (error) {
+      alert('Server bilan ulanishda xatolik.');
+    }
+  };
 
   const renderUserData = () => {
-    if (!filteredUserData?.length) return <p>Ma'lumotlarni yuklash...</p>;
+    if (loading) return <p>Ma'lumotlarni yuklash...</p>;
+    if (!filteredUserData?.length) return <p>Foydalanuvchi topilmadi.</p>;
 
     return filteredUserData.map((user, index) => {
       const userInfoArray = [
@@ -30,7 +60,11 @@ function App() {
           label: 'Profil rasm',
           value: (
             <img
-              src={user.profilePhotoUrl === "No photo" ? 'https://cdn-icons-png.flaticon.com/128/3940/3940417.png' : user.profilePhotoUrl}
+              src={
+                user.profilePhotoUrl === 'No photo'
+                  ? 'https://cdn-icons-png.flaticon.com/128/3940/3940417.png'
+                  : user.profilePhotoUrl
+              }
               alt="Profile"
               width="100"
             />
@@ -50,30 +84,11 @@ function App() {
     });
   };
 
-
-  const handleLogout = async (id) => {
-    try {
-      // Foydalanuvchi ma'lumotlarini serverdan o'chirish uchun so'rov yuboriladi
-      const response = await axios.delete(`http://localhost:5000/api/user/${id}`);
-
-      if (response.status === 200) {
-        // userId holatini tozalash
-        setUserId(null);
-      } else {
-        alert('Foydalanuvchi ma’lumotlarini o‘chirishda xatolik yuz berdi');
-      }
-    } catch (error) {
-      alert('Server bilan ulanishda xatolik');
-    }
-  };
-
-
-  if (!userId) {
-    // Agar userId mavjud bo'lmasa, foydalanuvchiga xato xabari ko'rsatiladi
+  if (!window.Telegram?.WebApp) {
     return (
       <div className="box">
         <h1>Telegram WebApp</h1>
-        <p>Ushbu dastur faqat Telegram WebApp sifatida ishlaydi va browzer tomonidan qo'llab-quvvatlanmaydi. Iltimos, botga Telegram orqali kiring.</p>
+        <p>Ushbu dastur faqat Telegram WebApp sifatida ishlaydi.</p>
         <a
           href="https://t.me/YOUR_TELEGRAM_BOT_USERNAME"
           target="_blank"
@@ -85,15 +100,20 @@ function App() {
       </div>
     );
   }
+
   return (
     <div className="box">
       <h1>Telegram WebApp</h1>
-      <p>User ID: {userId}</p> {/* Display the extracted user ID */}
+      {userId && <p>User ID: {userId}</p>}
       <div className="user-list">{renderUserData()}</div>
-      <button onClick={handleLogout} className="close-btn">Logout</button>
+      <button onClick={handleLogout} className="close-btn">
+        Logout
+      </button>
+      <button onClick={handleClose} className="close-btn">
+        Botdan chiqish
+      </button>
     </div>
   );
 }
 
 export default App;
-
