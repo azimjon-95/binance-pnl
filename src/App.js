@@ -49,7 +49,7 @@ function App() {
 
   const renderUserData = () => {
     if (loading) return <p>Ma'lumotlarni yuklash...</p>;
-    if (!filteredUserData?.length) return <p>Foydalanuvchi topilmadi.</p>;
+    // if (!filteredUserData?.length) return <p>Foydalanuvchi topilmadi.</p>;
 
     return filteredUserData.map((user, index) => {
       const userInfoArray = [
